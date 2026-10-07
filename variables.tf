@@ -4,7 +4,7 @@
 variable "kubeconfig_path" {
   description = "Path to a kubeconfig for the k3s cluster (a copy of /etc/rancher/k3s/k3s.yaml with the server address fixed up)"
   type        = string
-  default     = "~/.kube/config"
+  default     = "/etc/rancher/k3s/k3s.yaml"
 }
 
 variable "kubeconfig_context" {
