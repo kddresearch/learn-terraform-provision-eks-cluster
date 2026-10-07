@@ -26,6 +26,17 @@ output "default_storage_class" {
   value       = try(local.default_storage_classes[0], null)
 }
 
+output "nginx_endpoint" {
+  description = "URL of the nginx LoadBalancer service"
+  value = format("http://%s:%d",
+    coalesce(
+      try(data.kubernetes_service_v1.nginx.status[0].load_balancer[0].ingress[0].ip, ""),
+      try(data.kubernetes_service_v1.nginx.status[0].load_balancer[0].ingress[0].hostname, ""),
+    ),
+    data.kubernetes_service_v1.nginx.spec[0].port[0].port,
+  )
+}
+
 output "namespace" {
   description = "Namespace created for workloads"
   value       = kubernetes_namespace_v1.education.metadata[0].name
