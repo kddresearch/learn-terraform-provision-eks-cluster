@@ -2,21 +2,31 @@
 # SPDX-License-Identifier: MPL-2.0
 
 output "cluster_endpoint" {
-  description = "Endpoint for EKS control plane"
-  value       = module.eks.cluster_endpoint
-}
-
-output "cluster_security_group_id" {
-  description = "Security group ids attached to the cluster control plane"
-  value       = module.eks.cluster_security_group_id
-}
-
-output "region" {
-  description = "AWS region"
-  value       = var.region
+  description = "Kubernetes API server URL from the kubeconfig"
+  value       = local.cluster.server
 }
 
 output "cluster_name" {
-  description = "Kubernetes Cluster Name"
-  value       = module.eks.cluster_name
+  description = "Cluster name from the kubeconfig (k3s calls it \"default\")"
+  value       = local.context.cluster
+}
+
+output "kubernetes_version" {
+  description = "Kubelet version reported by the first node"
+  value       = data.kubernetes_nodes.all.nodes[0].status[0].node_info[0].kubelet_version
+}
+
+output "nodes" {
+  description = "Names of all nodes in the cluster"
+  value       = [for n in data.kubernetes_nodes.all.nodes : n.metadata[0].name]
+}
+
+output "default_storage_class" {
+  description = "The cluster's default StorageClass, or null if none is set"
+  value       = try(local.default_storage_classes[0], null)
+}
+
+output "namespace" {
+  description = "Namespace created for workloads"
+  value       = kubernetes_namespace_v1.education.metadata[0].name
 }
